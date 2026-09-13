@@ -46,8 +46,17 @@
             100% { transform: translateX(-50%) translateZ(0) scaleY(1); }
         }
         
+        @keyframes duck-float {
+            0%, 100% { transform: translateY(0px) rotate(-3deg); }
+            50% { transform: translateY(-6px) rotate(4deg); }
+        }
+
+        .duck-animation {
+            animation: duck-float 2.8s ease-in-out infinite;
+        }
+
         .wave-bg {
-            background: linear-gradient(180deg, rgba(56,189,248,0.8) 0%, rgba(14,165,233,1) 100%);
+            background: linear-gradient(180deg, rgba(56,189,248,0.85) 0%, rgba(14,165,233,1) 100%);
         }
         
         .wave-effect {
@@ -59,7 +68,7 @@
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.6);
         }
@@ -95,8 +104,8 @@
                 </div>
             </div>
 
-            <!-- Quick Info Badges -->
-            <div class="flex items-center gap-2 sm:gap-4">
+            <!-- Quick Info Badges & Actions -->
+            <div class="flex items-center gap-2 sm:gap-3">
                 <button onclick="openCalcModal()" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-aqua-50 text-aqua-700 hover:bg-aqua-100 transition text-xs font-semibold">
                     <i class="fa-solid fa-calculator text-aqua-500"></i>
                     <span>水份計算器</span>
@@ -105,7 +114,7 @@
                     <i class="fa-solid fa-fire text-amber-500"></i>
                     <span id="streak-count-badge">0 天達標</span>
                 </div>
-                <button onclick="openSettingsModal()" class="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition">
+                <button onclick="openSettingsModal()" class="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition" title="個人設定">
                     <i class="fa-solid fa-gear text-base"></i>
                 </button>
             </div>
@@ -114,10 +123,12 @@
 
     <main class="max-w-5xl mx-auto px-4 pt-6 space-y-6">
 
+        <!-- Main Dashboard Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-            <!-- Left / Top Column: Visual Water Meter & Goal -->
+            <!-- Left Column: Water Meter & Timeline -->
             <div class="lg:col-span-5 flex flex-col gap-6">
+                <!-- Cup Animation Card -->
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col items-center justify-center relative overflow-hidden">
                     
                     <div class="w-full flex items-center justify-between mb-4">
@@ -128,7 +139,7 @@
                         <span id="progress-percentage-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">0%</span>
                     </div>
 
-                    <!-- Water Cup Wave Animation Container -->
+                    <!-- Water Cup Container -->
                     <div class="relative w-48 h-64 border-4 border-slate-200/80 rounded-b-[3rem] rounded-t-lg overflow-hidden bg-slate-50/50 shadow-inner my-2 flex items-end justify-center">
                         
                         <!-- Percentage overlay in cup -->
@@ -139,100 +150,157 @@
 
                         <!-- Fluid Wave Background -->
                         <div id="water-wave-fill" class="w-full transition-all duration-700 ease-out relative" style="height: 0%;">
+                            
+                            <!-- Floating Rubber Duck -->
+                            <div class="absolute -top-8 left-1/2 -translate-x-1/2 z-30 duck-animation pointer-events-none" title="水面上的黃色小鴨">
+                                <svg width="38" height="38" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" class="filter drop-shadow-md">
+                                    <path d="M14 36C14 26 24 24 32 24C36 24 39 21 40 18C41 15 40 11 44 7C48 3 56 4 58 10C60 16 54 21 50 22C50 22 58 23 60 31C62 39 54 48 40 48C24 48 14 44 14 36Z" fill="#FACC15"/>
+                                    <path d="M22 36C22 30 28 26 36 26C42 26 47 23 48 20C49 18 48 13 52 10C55 7 59 8 60 12C61 16 57 19 53 20C50 21 56 23 57 30C58 37 52 43 40 43C30 43 22 41 22 36Z" fill="#FDE047"/>
+                                    <path d="M52 14C56 14 62 16 60 19C58 22 52 20 50 18Z" fill="#FB923C"/>
+                                    <circle cx="47" cy="12" r="2.5" fill="#1E293B"/>
+                                    <circle cx="48" cy="11" r="0.9" fill="#FFFFFF"/>
+                                    <path d="M22 36C22 36 28 30 35 34C39 36 35 42 27 41C22 40.5 22 36 22 36Z" fill="#EAB308"/>
+                                </svg>
+                            </div>
+
                             <div class="absolute -top-10 left-0 w-[200%] h-10 wave-effect opacity-80 wave-bg rounded-[40%]"></div>
                             <div class="absolute -top-12 left-0 w-[200%] h-12 wave-effect-slow opacity-40 bg-cyan-300 rounded-[35%]"></div>
                             <div class="w-full h-full wave-bg"></div>
                         </div>
                     </div>
-
-                    <!-- Water Hydration Advice -->
-                    <p class="text-xs text-slate-500 text-center mt-3 font-medium flex items-center gap-1" id="hydration-tip-text">
-                        <i class="fa-solid fa-lightbulb text-amber-400"></i>
-                        <span>建議每次飲水 150-250ml，少量多次補水效果最佳！</span>
-                    </p>
                 </div>
 
-                <!-- Quick Reminder & Timer Card -->
-                <div class="bg-gradient-to-br from-aqua-600 to-cyan-600 rounded-3xl p-5 text-white shadow-lg shadow-aqua-500/20 relative overflow-hidden flex items-center justify-between">
-                    <div class="relative z-10 space-y-1">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-bell text-aqua-200 animate-bounce"></i>
-                            <span class="text-xs font-semibold text-aqua-100 uppercase tracking-wider">飲水提醒器</span>
-                        </div>
-                        <div class="text-xl font-bold" id="timer-status-text">未開啟提醒</div>
-                        <p class="text-xs text-aqua-100/90" id="timer-sub-text">可設定定時提醒，讓身體隨時保持水份</p>
-                    </div>
-                    <button id="toggle-timer-btn" onclick="toggleReminderTimer()" class="relative z-10 px-4 py-2.5 bg-white text-aqua-700 font-bold rounded-2xl shadow hover:bg-aqua-50 transition text-xs whitespace-nowrap">
-                        開啟提醒
-                    </button>
-                    <!-- Background Decoration -->
-                    <i class="fa-solid fa-clock absolute -right-4 -bottom-4 text-white/10 text-8xl pointer-events-none"></i>
-                </div>
-            </div>
-
-            <!-- Right Column: Quick Add, History Log, and Statistics -->
-            <div class="lg:col-span-7 flex flex-col gap-6">
-
-                <!-- Quick Add Buttons -->
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                            <i class="fa-solid fa-plus-circle text-aqua-500"></i>
-                            快速新增喝水紀錄
-                        </h3>
-                        <button onclick="openCustomAddModal()" class="text-xs text-aqua-600 hover:text-aqua-700 font-semibold hover:underline">
-                            + 自訂容量與類別
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <button onclick="addWaterRecord(150, '開水', 'fa-glass-water')" class="flex flex-col items-center justify-center p-3.5 rounded-2xl border border-slate-100 hover:border-aqua-300 hover:bg-aqua-50/50 transition group">
-                            <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition">
-                                <i class="fa-solid fa-glass-water"></i>
-                            </div>
-                            <span class="text-xs font-bold text-slate-700">小杯水</span>
-                            <span class="text-[11px] text-slate-400 font-medium">150 ml</span>
-                        </button>
-
-                        <button onclick="addWaterRecord(250, '開水', 'fa-mug-saucer')" class="flex flex-col items-center justify-center p-3.5 rounded-2xl border border-slate-100 hover:border-aqua-300 hover:bg-aqua-50/50 transition group">
-                            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition">
-                                <i class="fa-solid fa-mug-saucer"></i>
-                            </div>
-                            <span class="text-xs font-bold text-slate-700">馬克杯</span>
-                            <span class="text-[11px] text-slate-400 font-medium">250 ml</span>
-                        </button>
-
-                        <button onclick="addWaterRecord(500, '開水', 'fa-bottle-water')" class="flex flex-col items-center justify-center p-3.5 rounded-2xl border border-slate-100 hover:border-aqua-300 hover:bg-aqua-50/50 transition group">
-                            <div class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition">
-                                <i class="fa-solid fa-bottle-water"></i>
-                            </div>
-                            <span class="text-xs font-bold text-slate-700">保溫瓶</span>
-                            <span class="text-[11px] text-slate-400 font-medium">500 ml</span>
-                        </button>
-
-                        <button onclick="addWaterRecord(700, '開水', 'fa-whiskey-glass')" class="flex flex-col items-center justify-center p-3.5 rounded-2xl border border-slate-100 hover:border-aqua-300 hover:bg-aqua-50/50 transition group">
-                            <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition">
-                                <i class="fa-solid fa-whiskey-glass"></i>
-                            </div>
-                            <span class="text-xs font-bold text-slate-700">大水壺</span>
-                            <span class="text-[11px] text-slate-400 font-medium">700 ml</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Today's Log List -->
+                <!-- Today's Log List Card -->
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-4 flex-1 flex flex-col">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                         <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-slate-500"></i>
+                            <i class="fa-solid fa-list-check text-aqua-600"></i>
                             今日飲水時間軸
                         </h3>
                         <span id="log-count-text" class="text-xs font-medium text-slate-400">共 0 筆</span>
                     </div>
 
                     <!-- Log Scrollable Container -->
-                    <div id="logs-container" class="space-y-2.5 overflow-y-auto max-h-[280px] pr-1 flex-1">
+                    <div id="logs-container" class="space-y-2.5 overflow-y-auto max-h-[260px] pr-1 flex-1">
                         <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Quick Add, Timer & Hydration Tips -->
+            <div class="lg:col-span-7 flex flex-col gap-6">
+
+                <!-- Quick Add Buttons Panel -->
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                                <i class="fa-solid fa-bolt text-amber-500"></i>
+                                快速新增飲水紀錄
+                            </h3>
+                            <p class="text-xs text-slate-500">點擊下方預設容量快速記錄，或自訂飲用類別</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <button onclick="addWaterRecord(150, '小杯水', 'fa-glass-water')" class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 hover:bg-aqua-50 hover:border-aqua-300 transition text-center group flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-aqua-500 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-whiskey-glass text-lg"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-sm text-slate-800">+150 ml</div>
+                                <span class="text-[11px] text-slate-400 font-medium">一口/小杯</span>
+                            </div>
+                        </button>
+
+                        <button onclick="addWaterRecord(250, '馬克杯', 'fa-mug-saucer')" class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 hover:bg-aqua-50 hover:border-aqua-300 transition text-center group flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-aqua-600 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-mug-saucer text-lg"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-sm text-slate-800">+250 ml</div>
+                                <span class="text-[11px] text-slate-400 font-medium">標準馬克杯</span>
+                            </div>
+                        </button>
+
+                        <button onclick="addWaterRecord(350, '保溫瓶', 'fa-bottle-water')" class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 hover:bg-aqua-50 hover:border-aqua-300 transition text-center group flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-sky-600 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-bottle-water text-lg"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-sm text-slate-800">+350 ml</div>
+                                <span class="text-[11px] text-slate-400 font-medium">中保溫瓶</span>
+                            </div>
+                        </button>
+
+                        <button onclick="addWaterRecord(500, '運動水壺', 'fa-faucet-drip')" class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 hover:bg-aqua-50 hover:border-aqua-300 transition text-center group flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-glass-water-droplet text-lg"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-sm text-slate-800">+500 ml</div>
+                                <span class="text-[11px] text-slate-400 font-medium">大水壺/瓶裝</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <button onclick="openCustomAddModal()" class="w-full py-3 rounded-2xl border-2 border-dashed border-aqua-200 hover:border-aqua-400 bg-aqua-50/40 hover:bg-aqua-50 text-aqua-700 font-bold text-xs flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-plus-circle text-base text-aqua-500"></i>
+                        <span>新增自訂飲品與容量（無糖茶、黑咖啡、運動飲料等）</span>
+                    </button>
+                </div>
+
+                <!-- Reminder Timer Banner Card -->
+                <div class="bg-gradient-to-r from-aqua-600 to-cyan-600 rounded-3xl p-6 text-white shadow-md shadow-aqua-500/15 flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 opacity-10 text-8xl pointer-events-none">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+
+                    <div class="flex items-center gap-4 relative z-10">
+                        <div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-xl shrink-0">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-bold text-base" id="timer-status-text">喝水提醒通知器</h4>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20 border border-white/30">定時響鈴</span>
+                            </div>
+                            <p class="text-xs text-cyan-100 mt-0.5" id="timer-sub-text">可設定定時提醒，讓身體隨時保持足夠水份</p>
+                        </div>
+                    </div>
+
+                    <button id="toggle-timer-btn" onclick="toggleReminderTimer()" class="relative z-10 px-4 py-2.5 bg-white text-aqua-700 font-bold rounded-2xl shadow hover:bg-aqua-50 transition text-xs whitespace-nowrap">
+                        開啟提醒
+                    </button>
+                </div>
+
+                <!-- Hydration Health Tips -->
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-3 flex-1">
+                    <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-amber-400"></i>
+                        健康喝水好習慣Tips
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
+                            <span class="text-xs font-bold text-aqua-700 flex items-center gap-1">
+                                <i class="fa-solid fa-sun text-amber-500"></i> 起床空腹一杯
+                            </span>
+                            <p class="text-[11px] text-slate-500 leading-relaxed">清晨起床喝 200-300ml 溫開水，有助於促進腸胃蠕動與血液循環。</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
+                            <span class="text-xs font-bold text-aqua-700 flex items-center gap-1">
+                                <i class="fa-solid fa-glass-water text-sky-500"></i> 少量多次補充
+                            </span>
+                            <p class="text-[11px] text-slate-500 leading-relaxed">避免一次大口暴飲，每次飲水 100-200ml 讓身體細胞更有效吸收。</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
+                            <span class="text-xs font-bold text-aqua-700 flex items-center gap-1">
+                                <i class="fa-solid fa-utensils text-emerald-500"></i> 飯前半小時喝
+                            </span>
+                            <p class="text-[11px] text-slate-500 leading-relaxed">用餐前補充水份可增加飽足感，但用餐時避免大量喝水稀釋胃酸。</p>
+                        </div>
                     </div>
                 </div>
 
@@ -245,13 +313,13 @@
                 <div>
                     <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
                         <i class="fa-solid fa-chart-column text-aqua-600"></i>
-                        飲水統計與分析
+                        飲水統計與歷史分析
                     </h3>
-                    <p class="text-xs text-slate-500">追蹤過去 7 天的每日飲水達標狀況與習慣趨勢</p>
+                    <p class="text-xs text-slate-500">追蹤過去的每日飲水達標狀況與習慣趨勢</p>
                 </div>
                 <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-2xl">
-                    <button id="chart-tab-7" onclick="switchChartTab(7)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-sm transition">近7天</button>
-                    <button id="chart-tab-30" onclick="switchChartTab(30)" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 transition">近30天</button>
+                    <button id="chart-tab-7" onclick="switchChartTab(7)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-800 shadow-sm transition">近 7 天</button>
+                    <button id="chart-tab-30" onclick="switchChartTab(30)" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 transition">近 30 天</button>
                 </div>
             </div>
 
@@ -285,7 +353,7 @@
 
     <!-- Modal 1: Water Intake Calculator -->
     <div id="calc-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-300">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
             <button onclick="closeCalcModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
@@ -361,11 +429,11 @@
                             <i class="fa-solid fa-mug-saucer text-base text-amber-800"></i>
                             黑咖啡
                         </button>
-                        <button type="button" onclick="selectType('黑豆茶', 'fa-seedling', this)" class="type-btn p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex flex-col items-center gap-1">
+                        <button type="button" onclick="selectType('養生茶', 'fa-seedling', this)" class="type-btn p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex flex-col items-center gap-1">
                             <i class="fa-solid fa-seedling text-base text-lime-600"></i>
                             養生茶
                         </button>
-                        <button type="button" onclick="selectType('電解水', 'fa-bolt', this)" class="type-btn p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex flex-col items-center gap-1">
+                        <button type="button" onclick="selectType('運動飲料', 'fa-bolt', this)" class="type-btn p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex flex-col items-center gap-1">
                             <i class="fa-solid fa-bolt text-base text-amber-500"></i>
                             運動飲料
                         </button>
@@ -426,10 +494,10 @@
         </div>
     </div>
 
-    <!-- Floating Toast Notification -->
+    <!-- Floating Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- JavaScript Logic -->
+    <!-- JavaScript Application Logic -->
     <script>
         // Default State Configuration
         let appState = {
@@ -478,11 +546,11 @@
                     console.error('Failed to parse appState from storage:', e);
                 }
             } else {
-                // Initialize default sample data for today
+                // Initialize default sample data for today if empty
                 const today = getFormattedDate();
                 appState.records = [
                     { id: Date.now() - 3600000 * 3, timestamp: new Date(Date.now() - 3600000 * 3).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), amount: 250, type: '開水', icon: 'fa-mug-saucer', dateStr: today },
-                    { id: Date.now() - 3600000 * 1, timestamp: new Date(Date.now() - 3600000 * 1).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), amount: 350, type: '開水', icon: 'fa-bottle-water', dateStr: today }
+                    { id: Date.now() - 3600000 * 1, timestamp: new Date(Date.now() - 3600000 * 1).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), amount: 350, type: '保溫瓶', icon: 'fa-bottle-water', dateStr: today }
                 ];
             }
             calculateStreak();
@@ -532,7 +600,7 @@
                 container.innerHTML = `
                     <div class="flex flex-col items-center justify-center py-8 text-slate-400">
                         <i class="fa-solid fa-droplet-slash text-3xl mb-2 text-slate-300"></i>
-                        <span class="text-xs">今天還沒有飲水紀錄，快來喝第一杯水吧！</span>
+                        <span class="text-xs">今天還沒有飲水紀錄，快點擊上方按鈕喝第一杯水吧！</span>
                     </div>
                 `;
                 return;
@@ -602,7 +670,7 @@
                     streak++;
                     checkDate.setDate(checkDate.getDate() - 1);
                 } else if (dateStr === getFormattedDate()) {
-                    // Today not met yet, continue checking yesterday
+                    // Today not met yet, check yesterday
                     checkDate.setDate(checkDate.getDate() - 1);
                 } else {
                     break;
@@ -669,7 +737,6 @@
                 d.setDate(d.getDate() - i);
                 const dStr = getFormattedDate(d);
                 
-                // Format label as M/D or weekday
                 const labelStr = daysCount === 7 
                     ? d.toLocaleDateString('zh-TW', { weekday: 'short' })
                     : `${d.getMonth() + 1}/${d.getDate()}`;
@@ -744,7 +811,7 @@
                 btn.innerText = '關閉提醒';
                 btn.className = 'relative z-10 px-4 py-2.5 bg-slate-800 text-white font-bold rounded-2xl shadow hover:bg-slate-900 transition text-xs whitespace-nowrap';
                 statusText.innerText = `提醒已開啟 (${appState.reminderInterval}分鐘)`;
-                subText.innerText = '時間到了會彈出提示並提示補充水份';
+                subText.innerText = '時間到了會彈出提示並發出提醒音效';
 
                 startTimerInterval();
                 showToast(`已開啟喝水提醒，每 ${appState.reminderInterval} 分鐘提醒一次 ⏰`);
@@ -752,7 +819,7 @@
                 btn.innerText = '開啟提醒';
                 btn.className = 'relative z-10 px-4 py-2.5 bg-white text-aqua-700 font-bold rounded-2xl shadow hover:bg-aqua-50 transition text-xs whitespace-nowrap';
                 statusText.innerText = '未開啟提醒';
-                subText.innerText = '可設定定時提醒，讓身體隨時保持水份';
+                subText.innerText = '可設定定時提醒，讓身體隨時保持足夠水份';
 
                 clearInterval(reminderTimerId);
                 showToast('已關閉飲水提醒');
@@ -775,8 +842,8 @@
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-                osc.frequency.setValueAtTime(880, ctx.currentTime + 0.15); // A5
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                osc.frequency.setValueAtTime(880, ctx.currentTime + 0.15);
                 gain.gain.setValueAtTime(0.2, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
                 osc.connect(gain);
@@ -784,10 +851,11 @@
                 osc.start();
                 osc.stop(ctx.currentTime + 0.4);
             } catch (e) {
-                // Audio context may be restricted
+                // Audio context may be restricted before user interaction
             }
         }
 
+        // Modal Handler Functions
         function openCalcModal() {
             document.getElementById('calc-modal').classList.remove('hidden');
             calculateRecommendedIntake();
@@ -824,7 +892,6 @@
             showToast(`已設定新目標為 ${rec} ml 🎉`);
         }
 
-        // Custom Add Modal Logic
         function openCustomAddModal() {
             document.getElementById('custom-add-modal').classList.remove('hidden');
         }
@@ -853,7 +920,6 @@
             closeCustomAddModal();
         }
 
-        // Settings Modal Logic
         function openSettingsModal() {
             document.getElementById('setting-daily-goal').value = appState.dailyGoal;
             document.getElementById('setting-reminder-interval').value = appState.reminderInterval;
@@ -882,9 +948,9 @@
             const sampleRecords = [];
             const types = [
                 { type: '開水', icon: 'fa-glass-water' },
-                { type: '馬克杯水', icon: 'fa-mug-saucer' },
+                { type: '馬克杯', icon: 'fa-mug-saucer' },
                 { type: '無糖茶', icon: 'fa-mug-hot' },
-                { type: '黑咖啡', icon: 'fa-mug-saucer' }
+                { type: '保溫瓶', icon: 'fa-bottle-water' }
             ];
 
             for (let i = 6; i >= 0; i--) {
@@ -892,14 +958,13 @@
                 d.setDate(d.getDate() - i);
                 const dStr = getFormattedDate(d);
                 
-                // Generate 3-5 records per day
                 const count = Math.floor(Math.random() * 3) + 3;
                 for (let j = 0; j < count; j++) {
                     const tObj = types[Math.floor(Math.random() * types.length)];
                     sampleRecords.push({
                         id: Date.now() - (i * 86400000) - (j * 3600000),
                         timestamp: `${8 + j * 3}:00`,
-                        amount: [200, 250, 300, 400, 500][Math.floor(Math.random() * 5)],
+                        amount: [150, 250, 350, 500][Math.floor(Math.random() * 4)],
                         type: tObj.type,
                         icon: tObj.icon,
                         dateStr: dStr
@@ -927,7 +992,7 @@
 
             toast.className = `${bgClass} text-xs font-semibold px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto`;
             toast.innerHTML = `
-                <i class="fa-solid ${type === 'warning' ? 'fa-bell' : 'fa-circle-check'} text-aqua-400"></i>
+                <i class="fa-solid ${type === 'warning' ? 'fa-bell text-amber-300' : 'fa-circle-check text-aqua-400'}"></i>
                 <span>${message}</span>
             `;
 
